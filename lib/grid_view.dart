@@ -23,7 +23,7 @@ class Home extends StatelessWidget {
         ],
       ),
       body: GridView(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,
               mainAxisSpacing: 5,
               crossAxisSpacing: 5,
@@ -40,22 +40,4 @@ class Home extends StatelessWidget {
       ),
     );
   }
-}
-
-Widget _userList(BuildContext context, position) {
-  debugPrint('UI is building $position');
-  return ListTile(
-    leading: Icon(Icons.person),
-    title: Text('Person $position'),
-    subtitle: Text('Address $position'),
-    trailing: (position % 2 == 0)? Icon(Icons.phone) : Icon(Icons.email),
-    onTap: () {
-      _showSnackBar(context, 'Person $position');
-    },
-  );
-}
-
-void _showSnackBar(BuildContext context, String text){
-  ScaffoldMessenger.of(context)
-      .showSnackBar(SnackBar(content: Text(text)));
 }
