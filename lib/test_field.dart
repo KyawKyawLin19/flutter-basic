@@ -37,6 +37,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    bool _showPassword = false;
     return Scaffold(
       appBar: AppBar(
         title: const Text('TextField'),
@@ -70,12 +71,19 @@ class _HomeState extends State<Home> {
                   ),
                   SizedBox(height: 10,),
                   TextField(
-                    obscureText: true,
+                    obscureText: _showPassword,
                     controller: _passwordController,
                     decoration: const InputDecoration(
                       labelText: 'Enter Your Password',
                       prefixIcon: Icon(Icons.lock),
-                      suffixIcon: Icon(Icons.visibility),
+                      suffixIcon: IconButton(
+                        icon : Icon(Icons.visibility_off),
+                        onPressed: (){
+                          setState(() {
+                            _showPassword = !_showPassword;
+                          });
+                        },
+                      )
                     ),
                   ),
                   SizedBox(height: 10,),
