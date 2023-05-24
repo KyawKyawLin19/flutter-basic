@@ -17,6 +17,10 @@ void main() {
           enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.indigo)
           ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color:Colors.blue)
+          ),
+          errorStyle: TextStyle(color: Colors.blue)
         )
       ),
     )
@@ -30,14 +34,19 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _phoneController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  String? _name, _password, _address, _phone;
+  bool _showPassword = false;
+  bool _reading = false;
+  bool _football = false;
+  String _rdoMale = "Male";
+  String _rdoFemale = "Female";
+  String _groupValue = '';
+  bool _openJob = false;
   String _info = '';
+  final GlobalKey<FormState> _formKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
-    bool _showPassword = false;
     return Scaffold(
       appBar: AppBar(
         title: const Text('TextField'),
@@ -50,63 +59,199 @@ class _HomeState extends State<Home> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 8),
             child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.person),
-                      labelText: 'Enter Your Name',
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextFormField(
+                      validator: (str) {
+                        if( str == null || str.trim().isEmpty ) {
+                          return 'Please Enter Your Name';
+                        }
+                      },
+                      onSaved: (str) {
+                        _name = str;
+                      },
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.person),
+                        labelText: 'Enter Your Name',
 
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 10,),
-                  TextField(
-                    controller: _phoneController,
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.phone),
-                      labelText: 'Enter Your Age',
+                    SizedBox(height: 10,),
+                    TextFormField(
+                      validator: (str) {
+                        if( str == null || str.trim().length < 5 ) {
+                          return 'Please Enter at least 5 number';
+                        }
+                      },
+                      onSaved: (str) {
+                        _phone = str;
+                      },
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.phone),
+                        labelText: 'Enter Your Age',
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 10,),
-                  TextField(
-                    obscureText: _showPassword,
-                    controller: _passwordController,
-                    decoration: const InputDecoration(
-                      labelText: 'Enter Your Password',
-                      prefixIcon: Icon(Icons.lock),
-                      suffixIcon: IconButton(
-                        icon : Icon(Icons.visibility_off),
-                        onPressed: (){
+                    SizedBox(height: 10,),
+                    TextFormField(
+                      validator: (str) {
+                        if( str == null || str.trim().length < 8 ) {
+                          return 'Please Enter at least 8 number';
+                        }
+                      },
+                      onSaved: (str) {
+                        _password = str;
+                      },
+                      obscureText: _showPassword,
+                      decoration:  InputDecoration(
+                        labelText: 'Enter Your Password',
+                        prefixIcon: Icon(Icons.lock),
+                        suffixIcon: IconButton(
+                          icon : Icon(_showPassword? Icons.visibility : Icons.visibility_off),
+                          onPressed: (){
+                            setState(() {
+                              _showPassword = !_showPassword;
+                            });
+                          },
+                        )
+                      ),
+                    ),
+                    SizedBox(height: 10,),
+                    TextFormField(
+                      validator: (str) {
+                        if( str == null || str.trim().isEmpty ) {
+                          return 'Please Enter Address';
+                        }
+                      },
+                      onSaved: (str) {
+                        _address = str;
+                      },
+                      maxLines: 6,
+                      decoration: const InputDecoration(
+                          labelText: 'Enter Your Address',
+                          prefixIcon: Icon(Icons.map),
+                      ),
+                    ),
+                    SizedBox(height: 10,),
+                    CheckboxListTile(
+                      checkColor: Colors.blue,
+                      activeColor: Colors.white,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      title: const Text('Reading'),
+                      value: _reading,
+                      onChanged: (bool? isCheck) {
+                        setState(() {
+                          if(isCheck !=null) {
+                            _reading = isCheck;
+                          }
+                        });
+                    },),
+                    CheckboxListTile(
+                      checkColor: Colors.blue,
+                      activeColor: Colors.white,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      title: const Text('Football'),
+                      value: _football,
+                      onChanged: (bool? isCheck) {
+                        setState(() {
+                          if(isCheck !=null) {
+                            _football = isCheck;
+                          }
+                        });
+                      },),
+                    SizedBox(height: 10,),
+                    Row(
+                      children: [
+                        Text('Male'),
+                        Radio(
+                          value: _rdoMale,
+                          groupValue: _groupValue,
+                          fillColor: MaterialStateProperty.resolveWith((states) {
+                            if(states.contains(MaterialState.selected)) {
+                              return Colors.green;
+                            }
+                            return Colors.indigo;
+                          }),
+                          onChanged: (String? value) {
+                          if(value != null) {
+                            setState(() {
+                              _groupValue = value;
+                            });
+                          }
+                        },)
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text('Female'),
+                        Radio(
+                          value: _rdoFemale,
+                          groupValue: _groupValue,
+                          fillColor: MaterialStateProperty.resolveWith((states)
+                          {
+                            if(states.contains(MaterialState.selected)){
+                              return Colors.green;
+                            }
+                            return Colors.indigo;
+                          }),
+                          onChanged: (String? value) {
+                          if(value != null) {
+                            setState(() {
+                              _groupValue = value;
+                            });
+                          }
+                        },)
+                      ],
+                    ),
+                    SwitchListTile.adaptive(
+                        value: _openJob,
+                        activeColor: Colors.green,
+                        activeTrackColor: Colors.blue,
+                        inactiveThumbColor: Colors.blue,
+                        inactiveTrackColor: Colors.green,
+                        activeThumbImage: AssetImage('assets/clock.png'),
+                        onChanged: (isOpen) {
                           setState(() {
-                            _showPassword = !_showPassword;
+                            _openJob = isOpen;
                           });
                         },
-                      )
                     ),
-                  ),
-                  SizedBox(height: 10,),
-                  const TextField(
-                    maxLines: 6,
-                    decoration: InputDecoration(
-                        labelText: 'Enter Your Address',
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(_info,style: const TextStyle(fontSize: 20,color: Colors.black),),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(_info,style: const TextStyle(fontSize: 20,color: Colors.black),),
-                  ),
-                  OutlinedButton(onPressed: () {
-                      setState(() {
-                        _info = "Name is ${_nameController.text} \n Phone is ${_phoneController.text} \n Password is ${_passwordController.text}";
-                      });
-                  }, child: const Text('Generate Profile'))
-                ],
+                    OutlinedButton(onPressed: () {
+                      if(_formKey.currentState != null ){
+                        _formKey.currentState?.save();
+                        if(_formKey.currentState!.validate()){
+                          setState(() {
+                            _info = "Name is ${_name} \n Phone is ${_phone} \n Password is ${_password} \n Address is ${_address} \n ${hobbies()} \n Gender is ${_groupValue} \n ";
+                          });
+                        }
+                      }
+                    }, child: const Text('Generate Profile'))
+                  ],
+                ),
               ),
             ),
           )
       ),
     );
+  }
+
+  String hobbies() {
+    String h = "Hobbies are";
+    if(_reading) {
+      h = "$h Reading";
+      if(_football) {
+        h = "$h, ";
+      }
+    }
+    if(_football) {
+      h = "$h Football";
+    }
+    return h;
   }
 }
