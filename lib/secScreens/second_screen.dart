@@ -5,20 +5,17 @@ class SecondScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int valueFromFirstScreen = ModalRoute.of(context)!.settings.arguments as int;
+    // int valueFromFirstScreen = ModalRoute.of(context)!.settings.arguments as int;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Second Screen'),
-      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(valueFromFirstScreen.toString()),
+            // Text(valueFromFirstScreen.toString()),
             ElevatedButton(
               child: const Text('Go To First Screen'),
               onPressed: () {
-                Navigator.pop(context,123456);
+                Navigator.pop(context);
               },
             ),
             ElevatedButton(

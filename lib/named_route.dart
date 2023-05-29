@@ -1,5 +1,6 @@
 import 'package:first_lesson/const/route_list.dart';
 import 'package:first_lesson/secScreens/first_screen.dart';
+import 'package:first_lesson/secScreens/main_screen.dart';
 import 'package:first_lesson/secScreens/second_screen.dart';
 import 'package:first_lesson/secScreens/third_screen.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +19,12 @@ class Home extends StatelessWidget {
     return MaterialApp(
       title: 'Named Route',
       debugShowCheckedModeBanner: false,
-      routes: RouteList.routeList,
-      initialRoute: '/first',
+      home: MainScreen(),
+      theme:  ThemeData.light().copyWith(
+        navigationBarTheme: NavigationBarThemeData(
+
+        )
+      ),
     );
   }
 }

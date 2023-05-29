@@ -6,16 +6,12 @@ class FirstScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('First Screen'),
-      ),
       body: Center(
         child: Column(
           children: [
             ElevatedButton(
               onPressed: () async{
-                var secondData = await Navigator.pushNamed(context, '/second', arguments: 123);
-                debugPrint(secondData.toString());
+                await Navigator.pushNamed(context, '/second');
               },
               child: const Text('Go To Second Screen'),
             ),
