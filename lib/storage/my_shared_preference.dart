@@ -3,28 +3,33 @@ import 'dart:ffi';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyStorage {
-  Future<SharedPreferences> _sharedPreferences () async {
-    return await SharedPreferences.getInstance();
+  final SharedPreferences sharedPreferences;
+  MyStorage(this.sharedPreferences);
+
+  void saveString({required String key, required String? value}){
+    if(value != null) {
+      sharedPreferences.setString(key, value);
+    }
   }
 
-  void saveString({required String key, required String value}) async{
-    SharedPreferences sharedPreferences = await _sharedPreferences();
-    sharedPreferences.setString(key, value);
-  }
-
-  Future<String> getString(String key) async{
-    SharedPreferences sharedPreferences = await _sharedPreferences();
+  String getString(String key){
     return sharedPreferences.getString(key) ?? '';
   }
 
-  void saveBool({required String key, required bool value}) async{
-    SharedPreferences sharedPreferences = await _sharedPreferences();
+  void saveBool({required String key, required bool value}){
     sharedPreferences.setBool(key, value);
   }
 
-  Future<bool> getBool(String key) async {
-    SharedPreferences sharedPreferences = await _sharedPreferences();
+  bool getBool(String key) {
     return sharedPreferences.getBool(key) ?? false;
+  }
+
+  void remove(String key) {
+    sharedPreferences.remove(key);
+  }
+
+  Future<void> clearAll() async{
+    await sharedPreferences.clear();
   }
 
 }

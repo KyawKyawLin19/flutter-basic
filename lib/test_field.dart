@@ -1,10 +1,15 @@
+import 'package:first_lesson/storage/my_shared_preference.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences _sharedPreferences = await SharedPreferences.getInstance();
+
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Home(),
+      home: Home(sharedPreferences: _sharedPreferences),
       theme: ThemeData.light().copyWith(
         inputDecorationTheme: InputDecorationTheme(
           border: OutlineInputBorder(
@@ -28,6 +33,9 @@ void main() {
 }
 
 class Home extends StatefulWidget {
+  final SharedPreferences sharedPreferences;
+
+  const Home({super.key, required this.sharedPreferences});
 
   @override
   State<Home> createState() => _HomeState();
@@ -44,6 +52,14 @@ class _HomeState extends State<Home> {
   bool _openJob = false;
   String _info = '';
   final GlobalKey<FormState> _formKey = GlobalKey();
+  late final MyStorage _myStorage = MyStorage(widget.sharedPreferences);
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _setupData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,8 +67,13 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: const Text('TextField'),
         leading: const Icon(Icons.text_fields),
-        actions: const [
-          Icon(Icons.settings)
+        actions: [
+          IconButton(onPressed: () async{
+            await _myStorage.clearAll();
+            setState(() {
+              _setupData();
+            });
+          }, icon: Icon(Icons.delete))
         ],
       ),
       body: Center(
@@ -65,6 +86,7 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextFormField(
+                      initialValue: _name,
                       validator: (str) {
                         if( str == null || str.trim().isEmpty ) {
                           return 'Please Enter Your Name';
@@ -81,6 +103,7 @@ class _HomeState extends State<Home> {
                     ),
                     SizedBox(height: 10,),
                     TextFormField(
+                      initialValue: _phone,
                       validator: (str) {
                         if( str == null || str.trim().length < 5 ) {
                           return 'Please Enter at least 5 number';
@@ -96,6 +119,7 @@ class _HomeState extends State<Home> {
                     ),
                     SizedBox(height: 10,),
                     TextFormField(
+                      initialValue: _password,
                       validator: (str) {
                         if( str == null || str.trim().length < 8 ) {
                           return 'Please Enter at least 8 number';
@@ -120,6 +144,7 @@ class _HomeState extends State<Home> {
                     ),
                     SizedBox(height: 10,),
                     TextFormField(
+                      initialValue: _address,
                       validator: (str) {
                         if( str == null || str.trim().isEmpty ) {
                           return 'Please Enter Address';
@@ -226,6 +251,15 @@ class _HomeState extends State<Home> {
                       if(_formKey.currentState != null ){
                         _formKey.currentState?.save();
                         if(_formKey.currentState!.validate()){
+                          _myStorage.saveString(key: 'name', value: _name);
+                          _myStorage.saveString(key: 'phone', value: _phone);
+                          _myStorage.saveString(key: 'password', value: _password);
+                          _myStorage.saveString(key: 'address', value: _address);
+                          _myStorage.saveBool(key: 'reading', value: _reading);
+                          _myStorage.saveBool(key: 'football', value: _football);
+                          _myStorage.saveString(key: 'gender', value: _groupValue);
+                          _myStorage.saveBool(key: 'job', value: _openJob);
+
                           setState(() {
                             _info = "Name is ${_name} \n Phone is ${_phone} \n Password is ${_password} \n Address is ${_address} \n ${hobbies()} \n Gender is ${_groupValue} \n ";
                           });
@@ -253,5 +287,16 @@ class _HomeState extends State<Home> {
       h = "$h Football";
     }
     return h;
+  }
+
+  void _setupData() {
+    _name = _myStorage.getString('name');
+    _password = _myStorage.getString('password');
+    _phone = _myStorage.getString('phone');
+    _address = _myStorage.getString('address');
+    _reading = _myStorage.getBool('reading');
+    _football = _myStorage.getBool('football');
+    _groupValue = _myStorage.getString('gender');
+    _openJob = _myStorage.getBool('job');
   }
 }
